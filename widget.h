@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <plabel.h>
+#include <QSlider>
 #define LINE_H1 4
 #define LINE_H2 5
 #define LINE_V1 6
@@ -26,11 +27,13 @@ public:
     int itReadFile(QString filepath, int mode=-1);
     void initWidget();
     void readConfig();
+    void saveConfig();
 public slots:
     void dragH1();
     void dragH2();
     void dragV1();
     void dragV2();
+    void updateSlider();
 private:
     qint16 nChannelID;
     Ui::Widget *ui;
@@ -39,6 +42,9 @@ private:
     float width, height, funcRange, funcWidth, funcStart;
     QString ip, user, pwd;
     QTextCodec *codec;
+    QSlider *slider;
+    QLabel *lbSliderInfo;
+    int ratio;
 };
 
 #endif // WIDGET_H

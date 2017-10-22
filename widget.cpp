@@ -10,6 +10,7 @@
 #include <QDesktopWidget>
 #include <QFileDialog>
 #include <QTextCodec>
+#include <QSlider>
 #include <QSettings>
 #include <QMessageBox>
 
@@ -78,11 +79,46 @@ void Widget::initWidget()
     pb_drag_v2->setGeometry(width+funcStart, 140, funcWidth, 25);
     connect(pb_drag_v2,SIGNAL(clicked()),this,SLOT(dragV2()));
 
+    lbSliderInfo = new QLabel(this);
+    lbSliderInfo->setGeometry(width+funcStart, 170, funcWidth, 25);
+    lbSliderInfo->setText(codec->toUnicode("矫正系数：0"));
+
+
+    slider = new QSlider(this);
+    slider->setValue(ratio);
+    slider->setMaximum(1000);
+    slider->setMinimum(-1000);
+    slider->setSingleStep(10);
+    slider->setOrientation(Qt::Vertical);
+    slider->setTickPosition(QSlider::TicksLeft);
+    slider->setTickInterval(100);
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(updateSlider()));
+    slider->setGeometry(width+funcStart+funcWidth*0.5, 200, 20, funcWidth*2.5);
+
+
     QLabel *lb = new QLabel(this);
     lb->setWordWrap(true);
     lb->setText(codec->toUnicode("ESC - 还原\n F - 加载图片\n S - 截图\n Q - 关闭\n 1 - 横线1\n 2 - 横线2\n 3 - 竖线1\n 4 - 竖线2"));
-    lb->setGeometry(width+funcStart, 270, funcWidth, 300);
+    lb->setGeometry(width+funcStart, 380, funcWidth, 300);
 }
+
+void Widget::updateSlider()
+{
+    ratio = slider->value();
+    char _toStr[10];
+    sprintf(_toStr, "%d", ratio);
+    lbSliderInfo->setText(codec->toUnicode("矫正系数：") + codec->toUnicode(_toStr));
+
+}
+
+void Widget::saveConfig()
+{
+    QString iniFilePath = QDir::currentPath() + "/debug/video.ini";
+
+    QSettings settings(iniFilePath,QSettings::IniFormat);
+    settings.setValue("video/ratio", ratio);
+}
+
 
 void Widget::readConfig()
 {
@@ -92,6 +128,8 @@ void Widget::readConfig()
     ip = settings.value("video/ip").toString();
     user = settings.value("video/user").toString();
     pwd = settings.value("video/pwd").toString();
+    ratio = settings.value("video/ratio").toInt();
+
 }
 
 void Widget::dragH1()
@@ -114,6 +152,8 @@ void Widget::dragV2()
 Widget::~Widget()
 {
     EasyPlayer_Release();
+    qDebug() << ratio;
+    saveConfig();
     delete ui;
 }
 
