@@ -24,10 +24,14 @@ public:
     void start();
     void keyPressEvent(QKeyEvent* e);
     QString itOpenFile();
-    int itReadFile(QString filepath, int mode=-1);
+    int itReadFile(QString filepath, int mode);
     void initWidget();
     void readConfig();
     void saveConfig();
+    void setWH(int w, int h);
+    bool isInit;
+    pLabel *plb;
+    qint16 nChannelID;
 public slots:
     void dragH1();
     void dragH2();
@@ -35,16 +39,14 @@ public slots:
     void dragV2();
     void updateSlider();
 private:
-    qint16 nChannelID;
     Ui::Widget *ui;
-    pLabel *plb;
     int imgMode, displayMode;
     float width, height, funcRange, funcWidth, funcStart;
     QString ip, user, pwd;
     QTextCodec *codec;
     QSlider *slider;
     QLabel *lbSliderInfo;
-    int ratio;
+    int ratio, imgWidth, imgHeight;
 };
 
 #endif // WIDGET_H

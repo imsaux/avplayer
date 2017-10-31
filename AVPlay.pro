@@ -37,7 +37,6 @@ FORMS += \
 
 
 INCLUDEPATH += ./inc
-
 #LIBS += -LE:\05.Projects\06.QTProjects\AVPlay\lib -llibEasyPlayer
 
 
@@ -57,3 +56,11 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/
 
 DISTFILES += \
     video.ini
+
+win32: LIBS += -L$$PWD/inc/ -lDistortion
+
+INCLUDEPATH += $$PWD/inc
+DEPENDPATH += $$PWD/inc
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/inc/Distortion.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/inc/libDistortion.a

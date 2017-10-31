@@ -7,6 +7,8 @@
 #include <QPaintEvent>
 #include <QPushButton>
 #include "libEasyPlayerAPI.h"
+//#include <inc/Distortion.h>
+#include "inc/Distortion.h"
 #include <QDesktopWidget>
 #include <QFileDialog>
 #include <QTextCodec>
@@ -16,16 +18,26 @@
 
 int CALLBACK fun_callback( int _channelId, void *_channelPtr, int _frameType, char *pBuf, int bufSize, int width, int height)
 {
-    pLabel *pThis = (pLabel *)_channelPtr;
-    QImage tmpImg = QImage((const uchar*)pBuf, width, height, QImage::Format_RGB555);
+    Widget *pW = (Widget *)_channelPtr;
+//    pLabel *pThis = (pLabel *)_channelPtr;
+    if (pW->isInit==false)
+    {
+        DistortionCreat(width, height);
+        pW->isInit = true;
+    }
+    pW->setWH(width, height);
+    QImage timg =QImage((const uchar*)pBuf, width, height, QImage::Format_RGB888);
+    DistortionExport(timg.bits(), width, height, 3);
+//    QImage tmpImg = QImage(timg, QImage::Format_RGB555);
+
     if (height>2048)
     {
         int diff = (height - 2048) / 2;
-        pThis->setShowImage(tmpImg.copy(0, diff, width, 2048));
+        pW->plb->setShowImage(timg.copy(0, diff, width, 2048));
     }
     else
     {
-        pThis->setShowImage(tmpImg);
+        pW->plb->setShowImage(timg);
     }
     return 0;
 }
@@ -49,9 +61,17 @@ Widget::Widget(QWidget *parent) :
     funcWidth = funcRange * 0.7;
     funcStart = (funcRange - funcWidth) / 2;
     nChannelID = 0;
+    isInit = false;
     initWidget();
     EasyPlayer_Init();
     start();
+}
+
+void Widget::setWH(int w, int h)
+{
+    imgWidth = w;
+    imgHeight = h;
+    DistortionSet(imgWidth, imgHeight, ratio);
 }
 
 void Widget::initWidget()
@@ -81,11 +101,9 @@ void Widget::initWidget()
 
     lbSliderInfo = new QLabel(this);
     lbSliderInfo->setGeometry(width+funcStart, 170, funcWidth, 25);
-    lbSliderInfo->setText(codec->toUnicode("矫正系数：0"));
-
+    lbSliderInfo->setText(codec->toUnicode("校正系数：0"));
 
     slider = new QSlider(this);
-    slider->setValue(ratio);
     slider->setMaximum(1000);
     slider->setMinimum(-1000);
     slider->setSingleStep(10);
@@ -94,21 +112,22 @@ void Widget::initWidget()
     slider->setTickInterval(100);
     connect(slider, SIGNAL(valueChanged(int)), this, SLOT(updateSlider()));
     slider->setGeometry(width+funcStart+funcWidth*0.5, 200, 20, funcWidth*2.5);
+    slider->setValue(ratio);
 
 
     QLabel *lb = new QLabel(this);
     lb->setWordWrap(true);
-    lb->setText(codec->toUnicode("ESC - 还原\n F - 加载图片\n S - 截图\n Q - 关闭\n 1 - 横线1\n 2 - 横线2\n 3 - 竖线1\n 4 - 竖线2"));
+    lb->setText(codec->toUnicode("ESC - 还原\n  F - 加载图片\n  S - 截图\n  Q - 关闭\n  1 - 横线1\n  2 - 横线2\n  3 - 竖线1\n  4 - 竖线2"));
     lb->setGeometry(width+funcStart, 380, funcWidth, 300);
 }
 
 void Widget::updateSlider()
 {
     ratio = slider->value();
+    DistortionSet(imgWidth, imgHeight, ratio);
     char _toStr[10];
     sprintf(_toStr, "%d", ratio);
-    lbSliderInfo->setText(codec->toUnicode("矫正系数：") + codec->toUnicode(_toStr));
-
+    lbSliderInfo->setText(codec->toUnicode("校正系数：") + codec->toUnicode(_toStr));
 }
 
 void Widget::saveConfig()
@@ -129,7 +148,6 @@ void Widget::readConfig()
     user = settings.value("video/user").toString();
     pwd = settings.value("video/pwd").toString();
     ratio = settings.value("video/ratio").toInt();
-
 }
 
 void Widget::dragH1()
@@ -161,7 +179,7 @@ void Widget::start()
 {
 //    HWND hwnd = (HWND)this->plb->winId();
 //    nChannelID = EasyPlayer_OpenStream(ip.toLocal8Bit(), NULL, DISPLAY_FORMAT_RGB555, 0x01, user.toLocal8Bit(), pwd.toLocal8Bit(), NULL, fun_callback, this->plb);
-    nChannelID = EasyPlayer_OpenStream(ip.toLocal8Bit(), NULL, DISPLAY_FORMAT_RGB555, 0x01, user.toLocal8Bit(), pwd.toLocal8Bit(), NULL, fun_callback, this->plb);
+    nChannelID = EasyPlayer_OpenStream(ip.toLocal8Bit(), NULL, DISPLAY_FORMAT_RGB24_GDI, 0x01, user.toLocal8Bit(), pwd.toLocal8Bit(), NULL, fun_callback, this);
     if (nChannelID > 0)
     {
         EasyPlayer_SetFrameCache(nChannelID, 300);
@@ -238,6 +256,7 @@ void Widget::keyPressEvent(QKeyEvent *e)
     }
     else if (e->key()==Qt::Key_R)
     {
+        start();
         qDebug() << "刷新";
     }
     else if (e->key()==Qt::Key_Q)
