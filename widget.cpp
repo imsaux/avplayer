@@ -16,6 +16,7 @@
 #include <QSettings>
 #include <QMessageBox>
 
+
 int CALLBACK fun_callback( int _channelId, void *_channelPtr, int _frameType, char *pBuf, int bufSize, int width, int height)
 {
     Widget *pW = (Widget *)_channelPtr;
@@ -27,6 +28,7 @@ int CALLBACK fun_callback( int _channelId, void *_channelPtr, int _frameType, ch
     }
     pW->setWH(width, height);
     QImage timg =QImage((const uchar*)pBuf, width, height, QImage::Format_RGB888);
+
     DistortionExport(timg.bits(), width, height, 3);
 //    QImage tmpImg = QImage(timg, QImage::Format_RGB555);
 
