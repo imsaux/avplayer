@@ -2,10 +2,19 @@
 #define SHOW_THREAD_H
 
 
-class show_thread
+#include <QThread>
+#include <buffer.h>
+
+class showThread: public QThread
 {
+    Q_OBJECT
 public:
-    show_thread();
+    showThread();
+protected:
+    void run();
+signals:
+    void newFrame(const QImage &frame);
+//    void newName(const QString &name);
 };
 
 #endif // SHOW_THREAD_H
