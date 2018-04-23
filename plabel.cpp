@@ -24,6 +24,10 @@ pLabel::pLabel(QWidget *parent=0, int w=0, int h=0): QLabel(parent)
     dragMode = LINE_NONE;
 }
 
+void pLabel::resetImg()
+{
+    update();
+}
 
 void pLabel::setShowImage(QImage _img)
 {
@@ -35,10 +39,6 @@ void pLabel::paintEvent(QPaintEvent *e)
 {
     if(displayMode==DISPLAY_RTSP)
     {
-//        qDebug() << "paintEvent";
-//        qDebug() << width;
-//        qDebug() << height;
-
         this->setPixmap(QPixmap::fromImage(img.scaled(width,height)));
     }
     QLabel::paintEvent(e);
@@ -229,6 +229,13 @@ void pLabel::dragLine(int mode)
 
 void pLabel::screenShot()
 {
+    if (img.height()>2048)
+    {
+
+        int diff = (img.height() - 2048) / 2;
+
+        img = img.copy(0, diff, img.width(), 2048);
+    }
     img.save(QTime::currentTime().toString("hhmmsszzz")+".jpg");
 }
 

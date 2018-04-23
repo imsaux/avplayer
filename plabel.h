@@ -38,6 +38,7 @@ public:
     void updateQPointGroup(QPoint p);
     void screenShot();
     void dragLine(int mode);
+    void resetImg();
 
 private:
     QList<QPoint> h1, h2, v1, v2, _h1, _h2, _v1, _v2;

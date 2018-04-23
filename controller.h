@@ -2,7 +2,7 @@
 #define CONTROLLER_H
 
 #include <capture_thread.h>
-#include <show_thread.h>
+#include <distortion_thread.h>
 
 class Controller : public QObject
 {
@@ -12,9 +12,10 @@ public:
     Controller();
     ~Controller();
     bool Start();
-    void setShowThreadDistortion(int,int,int);
-    showThread *_show_thread;
     captureThread *_capture_thread;
+    distortion_thread *_distortion_thread;
+//    BGR2RGB_thread *_bgr2rgb_thread;
+//    TOIMG_thread *_toimg_thread;
 
 };
 

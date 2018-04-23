@@ -12,10 +12,7 @@ class captureThread: public QThread
 public:
     captureThread();
     void connectRTSP();
-    void readConfig();
-    void saveConfig();
     void stopRTSP();
-    void setDistortion(int,int,int);
 protected:
     void run();
 

@@ -1,6 +1,4 @@
 //#include "stdafx.h"
-#ifndef DISTORTION_API_H
-#define DISTORTION_API_H
 #include <math.h>
 #include <iostream>
 #include <fstream>
@@ -20,14 +18,13 @@ typedef struct Mapped
 extern "C" {
 #endif
 
-DISTORTION_API void DistortionExport(unsigned char* img, int imgwidth, int imgheight, int imgchannels);//ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½
-DISTORTION_API void DistortionSet(int imgwidth, int imgheight, int k);//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ïµï¿½ï¿½k
-DISTORTION_API void DistortionCreat(int imgwidth, int imgheight);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½
-DISTORTION_API void DistortionDelete(void);//ï¿½ï¿½ï¿½Ù»ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½
+DISTORTION_API void DistortionExport(Mapped *maped, unsigned char* img, int imgwidth, int imgheight, int imgchannels);//»û±äÐ£Õý
+DISTORTION_API void DistortionSet(Mapped *maped, int imgwidth, int imgheight, int k);//ÉèÖÃ»û±äÏµÊýk
+DISTORTION_API Mapped * DistortionCreat(int imgwidth, int imgheight);//´´½¨»û±äÓ³Éä±í
+DISTORTION_API void DistortionDelete(Mapped *maped);//Ïú»Ù»û±äÓ³Éä±í
 int DistortionRound(double val);
-Mapped* Map;
+
 
 #ifdef __cplusplus
 }
-#endif
 #endif

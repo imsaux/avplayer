@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QTextCodec>
+#include <QCheckBox>
 #include <QMessageBox>
 #include <QDesktopWidget>
 #include <QGuiApplication>
@@ -17,6 +18,7 @@
 #include <plabel.h>
 #include <controller.h>
 #include <global.h>
+#include <distortionwidget.h>
 
 #define LINE_H1 4
 #define LINE_H2 5
@@ -39,25 +41,30 @@ public:
     QString itOpenFile();
     int itReadFile(QString filepath, int mode);
     void initWidget();
+    void saveConfig();
+    void readConfig();
 
 public slots:
     void dragH1();
     void dragH2();
     void dragV1();
     void dragV2();
-    void updateSlider();
+//    void updateSlider();
+    void showDistorationDialog();
+    void cbChange(int);
 private:
     Ui::Widget *ui;
     int imgMode, displayMode;
     float winwidth, winheight, funcRange, funcWidth, funcStart;
+    QImage img;
     QTextCodec *codec;
-    QSlider *slider;
-    QLabel *lbSliderInfo;
     pLabel *plb;
     Controller *controller;
+    distortionWidget *dw;
 
 private slots:
-    void updateFrame(const QImage &frame);
+    void updateFrame1(char* p);
+//    void updateFrame2(char* p);
 
 };
 #endif // WIDGET_H
