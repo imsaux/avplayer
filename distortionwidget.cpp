@@ -22,15 +22,17 @@ void distortionWidget::initWidget()
     uint base = 20, diff = 25, btn_width = 50, btn_height = 25;
 
     distorationCodec = QTextCodec::codecForName("GB18030");
-    this->setFixedSize(800, 645);
+//    this->setFixedSize(800, 645);
+    this->setFixedSize(800, 45);
     this->setWindowTitle(distorationCodec->toUnicode("畸变校正"));
 
-    lpic = new QLabel(this);
-    lpic->setGeometry(0, 0, 800, 600);
+//    lpic = new QLabel(this);
+//    lpic->setGeometry(0, 0, 800, 600);
 
     pbRefresh = new QPushButton(this);
-    pbRefresh->setText(distorationCodec->toUnicode("刷新"));
-    pbRefresh->setGeometry(base + (btn_width + diff)*1, 610, btn_width, btn_height);
+    pbRefresh->setText(distorationCodec->toUnicode("校正"));
+//    pbRefresh->setGeometry(base + (btn_width + diff)*1, 610, btn_width, btn_height);
+    pbRefresh->setGeometry(base + (btn_width + diff)*8, 10, btn_width, btn_height);
     connect(pbRefresh, SIGNAL(clicked()), this, SLOT(distoration_refresh()));
 
 
@@ -39,11 +41,18 @@ void distortionWidget::initWidget()
 //    pbToFile->setGeometry(base + (btn_width + diff)*2, 610, btn_width, btn_height);
 //    connect(pbToFile, SIGNAL(clicked()), this, SLOT(distoration_tofile()));
 
-    lRatioInfo = new QLabel(this);
-    lRatioInfo->setGeometry(base + (btn_width + diff)*8, 610, btn_width, btn_height);
-    lRatioInfo->setNum(imgratio);
+//    lRatioInfo = new QLabel(this);
+//    lRatioInfo->setGeometry(base + (btn_width + diff)*8, 10, btn_width, btn_height);
+//    lRatioInfo->setNum(imgratio);
 
+    leRatio = new QLineEdit(this);
     slider = new QSlider(this);
+
+
+    leRatio->setGeometry(base + (btn_width + diff)*7, 10, btn_width, btn_height);
+    connect(leRatio, SIGNAL(textChanged(QString)), this, SLOT(updateSlider(QString)));
+    leRatio->setText(QString::number(imgratio));
+
     slider->setMaximum(1000);
     slider->setMinimum(-1000);
     slider->setSingleStep(50);
@@ -51,7 +60,7 @@ void distortionWidget::initWidget()
     slider->setTickPosition(QSlider::TicksLeft);
     slider->setTickInterval(50);
     connect(slider, SIGNAL(valueChanged(int)), this, SLOT(updateSlider(int)));
-    slider->setGeometry(base + (btn_width + diff)*4, 610, 300, btn_height);
+    slider->setGeometry(base + (btn_width + diff)*1, 10, 400, btn_height);
     slider->setValue(imgratio);
 
 
@@ -88,8 +97,9 @@ void distortionWidget::distoration_tofile()
 
 void distortionWidget::distoration_refresh()
 {
-    updateImg();
-    showImg();
+//    updateImg();
+//    showImg();
+    dp->setD(map, imgwidth, imgheight, imgratio);
 }
 
 void distortionWidget::updateImg()
@@ -101,6 +111,14 @@ void distortionWidget::updateImg()
     if(_init)
     {
         _init = false;
+    }
+}
+
+void distortionWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(event->button()==Qt::LeftButton)
+    {
+        dp->setD(map, imgwidth, imgheight, imgratio);
     }
 }
 
@@ -123,6 +141,24 @@ void distortionWidget::showImg()
 void distortionWidget::updateSlider(int p)
 {
     imgratio = p;
-    lRatioInfo->setNum(p);
+    leRatio->setText(QString::number(p));
+    this->update();
+}
+
+void distortionWidget::updateSlider(QString s)
+{
+    int v = s.toInt();
+    if(v>1000)
+    {
+        v=1000;
+        leRatio->setText(QString::number(v));
+    }
+    if(v<-1000)
+    {
+        v=-1000;
+        leRatio->setText(QString::number(v));
+    }
+    slider->setValue(v);
+    imgratio = v;
     this->update();
 }

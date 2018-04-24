@@ -17,6 +17,9 @@ Widget::Widget(QWidget *parent) :
     winheight = QApplication::desktop()->availableGeometry().height() - 50;
     readConfig();
     map= dp->initD(imgwidth, imgheight, imgratio);
+    dw=new distortionWidget();
+    hw=new helpWidget();
+
     initWidget();
     startMonitor();
 }
@@ -46,6 +49,12 @@ void Widget::initWidget()
     pb_drag_v2->setGeometry(base + (btn_width + diff)*3, winheight, btn_width, btn_height);
     connect(pb_drag_v2,SIGNAL(clicked()),this,SLOT(dragV2()));
 
+    QPushButton *pb_show_help = new QPushButton;
+    pb_show_help->setText(codec->toUnicode("帮助"));
+    pb_show_help->setParent(this);
+    pb_show_help->setGeometry(base + (btn_width + diff)*5, winheight, btn_width, btn_height);
+    connect(pb_show_help, SIGNAL(clicked()), this, SLOT(showHelpWidget()));
+
     QPushButton *pb_show_distoration = new QPushButton;
     pb_show_distoration->setText(codec->toUnicode("畸变校正设置"));
     pb_show_distoration->setParent(this);
@@ -54,7 +63,7 @@ void Widget::initWidget()
 //    connect(pb_drag_v2,SIGNAL(clicked()),this,SLOT(dragV2()));
 
     QCheckBox *cb_distortion = new QCheckBox(this);
-    cb_distortion->setGeometry(base + (btn_width + diff)*5, winheight, btn_width, btn_height);
+    cb_distortion->setGeometry(base + (btn_width + diff)*6, winheight, btn_width, btn_height);
     cb_distortion->setText(codec->toUnicode("开启校正"));
     cb_distortion->setChecked(isOpenDistortion);
     connect(cb_distortion, SIGNAL(stateChanged(int)), this, SLOT(cbChange(int)));
@@ -84,10 +93,14 @@ void Widget::cbChange(int state)
 
 void Widget::showDistorationDialog()
 {
-    dw=new distortionWidget();
     dw->show();
 }
 
+
+void Widget::showHelpWidget()
+{
+    hw->show();
+}
 
 
 void Widget::dragH1()
@@ -105,6 +118,12 @@ void Widget::dragV1()
 void Widget::dragV2()
 {
     this->plb->dragLine(LINE__V2);
+}
+
+void Widget::closeEvent(QCloseEvent *event)
+{
+    dw->close();
+    hw->close();
 }
 
 Widget::~Widget()
@@ -254,6 +273,10 @@ void Widget::keyPressEvent(QKeyEvent *e)
     {
         qDebug() << "竖线2";
         plb->setLineMode(LINE_V2);
+    }
+    else if(e->key()==Qt::Key_F1)
+    {
+        showHelpWidget();
     }
 
 }

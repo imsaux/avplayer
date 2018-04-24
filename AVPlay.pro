@@ -33,7 +33,8 @@ SOURCES += \
     controller.cpp \
     distortion_thread.cpp \
     distortion_pack.cpp \
-    distortionwidget.cpp
+    distortionwidget.cpp \
+    helpwidget.cpp
 
 
 HEADERS += \
@@ -46,11 +47,13 @@ HEADERS += \
     distortion_thread.h \
     C:\Users\sy\Downloads\avplayer-master\opencv2\opencv.hpp \
     distortion_pack.h \
-    distortionwidget.h
+    distortionwidget.h \
+    helpwidget.h
 
 FORMS += \
         widget.ui \
-    distortionwidget.ui
+    distortionwidget.ui \
+    helpwidget.ui
 
 
 

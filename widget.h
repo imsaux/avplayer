@@ -19,6 +19,7 @@
 #include <controller.h>
 #include <global.h>
 #include <distortionwidget.h>
+#include <helpwidget.h>
 
 #define LINE_H1 4
 #define LINE_H2 5
@@ -51,7 +52,10 @@ public slots:
     void dragV2();
 //    void updateSlider();
     void showDistorationDialog();
+    void showHelpWidget();
     void cbChange(int);
+protected:
+    void closeEvent(QCloseEvent *event);
 private:
     Ui::Widget *ui;
     int imgMode, displayMode;
@@ -61,6 +65,7 @@ private:
     pLabel *plb;
     Controller *controller;
     distortionWidget *dw;
+    helpWidget *hw;
 
 private slots:
     void updateFrame1(char* p);

@@ -7,6 +7,8 @@
 #include <QSlider>
 #include <QTime>
 #include <QTextCodec>
+#include <QLineEdit>
+#include <QMouseEvent>
 #include <global.h>
 
 namespace Ui {
@@ -28,7 +30,10 @@ public slots:
     void updateSlider(int);
     void distoration_refresh();
     void distoration_tofile();
+    void updateSlider(QString);
 
+protected:
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
     Ui::distortionWidget *ui;
@@ -36,6 +41,7 @@ private:
     QPushButton *pbRefresh, *pbToFile;
     QSlider *slider;
     QTextCodec *distorationCodec;
+    QLineEdit *leRatio;
     QImage img;
 };
 

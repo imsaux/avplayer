@@ -9,6 +9,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QTime>
+#include <QDir>
 #include "plabel.h"
 
 pLabel::pLabel(QWidget *parent=0, int w=0, int h=0): QLabel(parent)
@@ -229,6 +230,13 @@ void pLabel::dragLine(int mode)
 
 void pLabel::screenShot()
 {
+    QDir savedir;
+    QString savepath = "./screenshot/";
+    if(!savedir.exists(savepath))
+    {
+        savedir.mkdir(savepath);
+    }
+
     if (img.height()>2048)
     {
 
@@ -236,7 +244,8 @@ void pLabel::screenShot()
 
         img = img.copy(0, diff, img.width(), 2048);
     }
-    img.save(QTime::currentTime().toString("hhmmsszzz")+".jpg");
+    savedir=QDir(savepath);
+    img.save(savedir.absolutePath()+"/"+QTime::currentTime().toString("hhmmsszzz")+".jpg");
 }
 
 void pLabel::mouseMoveEvent(QMouseEvent *e)
